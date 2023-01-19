@@ -32,31 +32,6 @@ local GOSSIP_ICON_TABARD          = 8  -- 工会（战袍）
 local GOSSIP_ICON_BATTLE          = 9  -- 加入战场 双剑交叉
 local GOSSIP_ICON_DOT             = 10 -- 加入战场
 
--- 商人
-local NPC_YUANSU = 4001001
-local NPC_BULIAO = 4001002
-local NPC_PIGE = 4001003
-local NPC_JINSUKUANGSHI = 4001004
-local NPC_CAOYAO = 4001005
-local NPC_FUMO = 4001006
-local NPC_ZHUBAO = 4001007
-local NPC_GAOJIZHUBAO = 4001008
-local NPC_JIERIWANJU1 = 4001009
-local NPC_JIERIWANJU2 = 4001010
-local NPC_DW_DAOZEI = 4002001
-local NPC_DW_DELUYI = 4002002
-local NPC_DW_FASHI = 4002003
-local NPC_DW_LIEREN = 4002004
-local NPC_DW_MUSHI = 4002005
-local NPC_DW_QISHI = 4002006
-local NPC_DW_SAMAN = 4002007
-local NPC_DW_SUSHI = 4002008
-local NPC_DW_SIQI = 4002009
-local NPC_DW_ZHANSHI = 4002010
-local NPC_YAOSHI1 = 4003001
-local NPC_YAOSHI2 = 4003002
-local NPC_YAOSHI3 = 4003003
-
 --装备位置
 local EQUIPMENT_SLOT_HEAD         = 0--头部
 local EQUIPMENT_SLOT_NECK         = 1--颈部
@@ -79,8 +54,8 @@ local EQUIPMENT_SLOT_RANGED       = 17--远程
 local EQUIPMENT_SLOT_TABARD       = 18--徽章
 
 --随身NPC
-local ST={
-    TIME=45,--45秒
+local ST = {
+    TIME = 60, -- NPC 持续时间
     -- [guid]=lasttime, --上次使用时间
 }
 
@@ -101,52 +76,272 @@ local Instances={--副本表
         {724,0},{724,1},{724,2},{724,3},
 }
 
+
+function ST.SummonNPC_4001001(player)
+	ST.SummonNPC(player, 4001001)
+end
+function ST.SummonNPC_4001002(player)
+	ST.SummonNPC(player, 4001002)
+end
+function ST.SummonNPC_4001003(player)
+	ST.SummonNPC(player, 4001003)
+end
+function ST.SummonNPC_4001004(player)
+	ST.SummonNPC(player, 4001004)
+end
+function ST.SummonNPC_4001005(player)
+	ST.SummonNPC(player, 4001005)
+end
+function ST.SummonNPC_4001006(player)
+	ST.SummonNPC(player, 4001006)
+end
+function ST.SummonNPC_4001007(player)
+	ST.SummonNPC(player, 4001007)
+end
+function ST.SummonNPC_4001008(player)
+	ST.SummonNPC(player, 4001008)
+end
+function ST.SummonNPC_4001009(player)
+	ST.SummonNPC(player, 4001009)
+end
+function ST.SummonNPC_4001010(player)
+	ST.SummonNPC(player, 4001010)
+end
+function ST.SummonNPC_4002001(player)
+	ST.SummonNPC(player, 4002001)
+end
+function ST.SummonNPC_4002002(player)
+	ST.SummonNPC(player, 4002002)
+end
+function ST.SummonNPC_4002003(player)
+	ST.SummonNPC(player, 4002003)
+end
+function ST.SummonNPC_4002004(player)
+	ST.SummonNPC(player, 4002004)
+end
+function ST.SummonNPC_4002005(player)
+	ST.SummonNPC(player, 4002005)
+end
+function ST.SummonNPC_4002006(player)
+	ST.SummonNPC(player, 4002006)
+end
+function ST.SummonNPC_4002007(player)
+	ST.SummonNPC(player, 4002007)
+end
+function ST.SummonNPC_4002008(player)
+	ST.SummonNPC(player, 4002008)
+end
+function ST.SummonNPC_4002009(player)
+	ST.SummonNPC(player, 4002009)
+end
+function ST.SummonNPC_4002010(player)
+	ST.SummonNPC(player, 4002010)
+end
+function ST.SummonNPC_4003001(player)
+	ST.SummonNPC(player, 4003001)
+end
+function ST.SummonNPC_4003002(player)
+	ST.SummonNPC(player, 4003002)
+end
+function ST.SummonNPC_4003003(player)
+	ST.SummonNPC(player, 4003003)
+end
+
+local function ResetPlayer(player, flag, text)
+    player:SetAtLoginFlag(flag)
+    player:SendAreaTriggerMessage("你需要重新登录角色，才能修改"..text.."。")
+    player:SendAreaTriggerMessage("正在返回选择角色菜单")
+    player:LogoutPlayer(true)
+end
+
+local Stone={
+    GetTimeASString=function(player)
+        local inGameTime=player:GetTotalPlayedTime()
+        local days=math.modf(inGameTime/(24*3600))
+        local hours=math.modf((inGameTime-(days*24*3600))/3600)
+        local mins=math.modf((inGameTime-(days*24*3600+hours*3600))/60)
+        return days.."天"..hours.."时"..mins.."分"
+    end,
+
+    GoHome=function(player)--回到家
+        player:CastSpell(player,8690,true)
+        player:ResetSpellCooldown(8690, true)
+        player:SendBroadcastMessage("已经回到家")
+    end,
+
+    SetHome=function(player)--设置当前位置为家
+        local x,y,z,mapId,areaId=player:GetX(),player:GetY(),player:GetZ(),player:GetMapId(),player:GetAreaId() 
+        player:SetBindPoint(x,y,z,mapId,areaId)
+        player:SendBroadcastMessage("已经设置当前位置为家")
+    end,
+
+    OpenBank=function(player)--打开银行
+        player:SendShowBank(player)
+        player:SendBroadcastMessage("已经打开银行")
+    end,
+
+    WeakOut=function(player)--移除复活虚弱
+        if(player:HasAura(15007))then
+            player:RemoveAura(15007)    --移除复活虚弱
+            player:SetHealth(player:GetMaxHealth())
+            --self:RemoveAllAuras()    --移除所有状态
+            player:SendBroadcastMessage("你的身上的复活虚弱状态已经被移除。")
+        else
+            player:SendBroadcastMessage("你的身上没有复活虚弱状态。")
+        end
+    end,
+
+    OutCombat=function(player)--脱离战斗
+        if(player:IsInCombat())then
+            player:ClearInCombat()
+            player:SendAreaTriggerMessage("你已经脱离战斗")
+            player:SendBroadcastMessage("你已经脱离战斗。")
+        else
+            player:SendAreaTriggerMessage("你并没有在战斗。")
+            player:SendBroadcastMessage("你并没有在战斗。")
+        end
+    end,
+
+    WSkillsToMax=function(player)--技能熟练度
+        player:AdvanceSkillsToMax()
+        player:SendBroadcastMessage("当前技能熟练度已经达到最大值")
+    end,
+
+    MaxHealth=function(player)    --回复生命
+        player:SetHealth(player:GetMaxHealth())
+        player:SendBroadcastMessage("生命值已经回满。")
+    end,
+
+    ResetTalents = function(player)--重置天赋
+        player:ResetTalents(true)--免费
+        player:SendBroadcastMessage("已经重置天赋")
+    end,
+
+    ResetPetTalents=function(player)--重置宠物天赋
+        player:ResetPetTalents()
+        player:SendBroadcastMessage("已经重置宠物天赋")
+    end,
+
+    ResetAllCD=function(player)--刷新冷却
+        player:ResetAllCooldowns()
+        player:SendBroadcastMessage("已经重置物品和技能冷却")
+    end,
+
+    RepairAll=function(player)--修理装备
+        player:DurabilityRepairAll(true,1,false)
+        player:SendBroadcastMessage("修理完所有装备。")
+    end,
+
+    SaveToDB=function(player)--保存数据
+        player:SaveToDB()
+        player:SendAreaTriggerMessage("保存数据完成")
+    end,
+
+    Logout=function(player)--返回选择角色
+        player:SendAreaTriggerMessage("正在返回选择角色菜单")
+        player:LogoutPlayer(true)
+    end,
+
+    LogoutNosave=function(player)--不保存数据,返回选择角色
+        player:SendAreaTriggerMessage("正在返回选择角色菜单")
+        player:LogoutPlayer(false)
+    end,
+
+    UnBind=function(player)    --副本解绑
+        local nowmap=player:GetMapId()
+        for k, v in pairs(Instances) do 
+            local mapid=v[1]
+            if(mapid~=nowmap)then
+                player:UnbindInstance(v[1],v[2])
+            else
+                player:SendBroadcastMessage("你所在的当前副本无法解除绑定。")
+            end
+        end
+        player:SendAreaTriggerMessage("已经解除所有副本的绑定")
+        player:SendBroadcastMessage("已经解除所有副本的绑定。")
+    end,
+
+    --[[登录标志
+    AT_LOGIN_RENAME            = 0x01,
+    AT_LOGIN_RESET_SPELLS      = 0x02,
+    AT_LOGIN_RESET_TALENTS     = 0x04,
+    AT_LOGIN_CUSTOMIZE         = 0x08,
+    AT_LOGIN_RESET_PET_TALENTS = 0x10,
+    AT_LOGIN_FIRST             = 0x20,
+    AT_LOGIN_CHANGE_FACTION    = 0x40,
+    AT_LOGIN_CHANGE_RACE       = 0x80
+    ]]--
+    ResetName=function(player, code)--修改名字
+        local target=player:GetSelection()
+        if(target and (target:GetTypeId()==player:GetTypeId()))then
+            ResetPlayer(target, 0x1, "名字")
+        else
+            player:SendAreaTriggerMessage("请选中一个玩家。")
+        end
+    end,
+    ResetFace=function(player)
+        ResetPlayer(player, 0x8, "外貌")
+    end,
+    ResetRace=function(player)
+        ResetPlayer(player, 0x80, "种族")
+    end,
+    ResetFaction=function(player)
+        ResetPlayer(player, 0x40, "阵营")
+    end,
+    ResetSpell=function(player)
+        ResetPlayer(player, 0x2, "所有法术")
+    end,
+}
+
+
+-- 菜单配置
 local Menu={
     [MMENU]={--主菜单
-        {FUNC, "传送回家",         Stone.GoHome,       GOSSIP_ICON_CHAT,        false, "是否传送回|cFFF0F000家|r ?"},
-        {FUNC, "记录位置",         Stone.SetHome,      GOSSIP_ICON_INTERACT_1,  false, "是否设置当前位置为|cFFF0F000家|r ?"},
+        {FUNC, "传送回家",         Stone.GoHome,       GOSSIP_ICON_CHAT, false, "是否传送回|cFFF0F000家|r ?"},
+        {FUNC, "记录位置",         Stone.SetHome,      GOSSIP_ICON_INTERACT_1, false, "是否设置当前位置为|cFFF0F000家|r ?"},
         {FUNC, "在线银行",         Stone.OpenBank,     GOSSIP_ICON_MONEY_BAG},
         {MENU, "地图传送",         TPMENU,             GOSSIP_ICON_BATTLE},
         {MENU, "双重附魔",         ENCMENU,            GOSSIP_ICON_TABARD},
-        {FUNC, "解除副本绑定",      Stone.UnBind,       GOSSIP_ICON_INTERACT_1,  false, "是否解除所有副本绑定 ?"},
-        {MENU, "召唤材料商",       BUYMENU+0x10,	    GOSSIP_ICON_VENDOR},
+        {FUNC, "解除副本绑定",      Stone.UnBind,       GOSSIP_ICON_INTERACT_1, false, "是否解除所有副本绑定 ?"},
         {MENU, "其他功能",         MMENU+0x10,         GOSSIP_ICON_INTERACT_1},
         {MENU, "职业技能训练师",    MMENU+0x20,         GOSSIP_ICON_BATTLE},
         {MENU, "专业技能训练师",    MMENU+0x30,         GOSSIP_ICON_BATTLE},
+        {MENU, "召唤 NPC 商人",    MMENU+0x40,       GOSSIP_ICON_VENDOR},
         {FUNC, "强制脱离战斗",      Stone.OutCombat,    GOSSIP_ICON_CHAT},
     },
 
-    [BUYMENU+0x10]={-- 材料商
-        {FUNC, "召唤材料商-元素", 	ST.SummonNPC_4001001,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-布料", 	ST.SummonNPC_4001002,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-皮革", 	ST.SummonNPC_4001003,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-金属和矿石", 	ST.SummonNPC_4001004,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-草药", 	ST.SummonNPC_4001005,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-附魔", 	ST.SummonNPC_4001006,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-珠宝", 	ST.SummonNPC_4001007,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-高级珠宝", 	ST.SummonNPC_4001008,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-节日玩具1", 	ST.SummonNPC_4001009,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤材料商-节日玩具2", 	ST.SummonNPC_4001010,	GOSSIP_ICON_TRAINER},
-        {MENU, "召唤材料商-雕文", 	BUYMENU+0x1010,	GOSSIP_ICON_TRAINER},
-        {MENU, "召唤材料商-钥匙", 	BUYMENU+0x1020,	GOSSIP_ICON_TRAINER},
+    [MMENU+0x40]={-- 材料商
+        {FUNC, "召唤材料商-元素",       ST.SummonNPC_4001001, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-布料",       ST.SummonNPC_4001002, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-皮革",       ST.SummonNPC_4001003, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-金属和矿石",  ST.SummonNPC_4001004, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-草药",       ST.SummonNPC_4001005, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-附魔",       ST.SummonNPC_4001006, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-珠宝",       ST.SummonNPC_4001007, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-高级珠宝",    ST.SummonNPC_4001008, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-节日玩具1",   ST.SummonNPC_4001009, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤材料商-节日玩具2",   ST.SummonNPC_4001010, GOSSIP_ICON_TRAINER},
+        {MENU, "召唤雕文商",            MMENU+0x50, GOSSIP_ICON_TRAINER},
+        {MENU, "召唤钥匙商",            MMENU+0x60, GOSSIP_ICON_TRAINER},
     },
-
-    [BUYMENU+0x1010]={-- 材料商
-        {FUNC, "召唤雕文商-盗贼", 	ST.SummonNPC_4002001,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-德鲁伊", 	ST.SummonNPC_4002002,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-法师", 	ST.SummonNPC_4002003,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-猎人", 	ST.SummonNPC_4002004,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-牧师", 	ST.SummonNPC_4002005,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-骑士", 	ST.SummonNPC_4002006,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-萨满", 	ST.SummonNPC_4002007,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-术士", 	ST.SummonNPC_4002008,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-死骑", 	ST.SummonNPC_4002009,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤雕文商-战士", 	ST.SummonNPC_4002010,	GOSSIP_ICON_TRAINER},
+    -- 雕文菜单
+    [MMENU+0x50]={
+        {FUNC, "召唤雕文商-盗贼",   ST.SummonNPC_4002001, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-德鲁伊", ST.SummonNPC_4002002, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-法师",   ST.SummonNPC_4002003, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-猎人",   ST.SummonNPC_4002004, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-牧师",   ST.SummonNPC_4002005, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-骑士",   ST.SummonNPC_4002006, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-萨满",   ST.SummonNPC_4002007, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-术士",   ST.SummonNPC_4002008, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-死骑",   ST.SummonNPC_4002009, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤雕文商-战士",   ST.SummonNPC_4002010, GOSSIP_ICON_TRAINER},
     },
-    [BUYMENU+0x1020]={-- 材料商
-        {FUNC, "召唤钥匙商-一号", 	ST.SummonNPC_4003001,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤钥匙商-二号", 	ST.SummonNPC_4003002,	GOSSIP_ICON_TRAINER},
-        {FUNC, "召唤钥匙商-三号", 	ST.SummonNPC_4003003,	GOSSIP_ICON_TRAINER},
+    -- 材料商
+    [MMENU+0x60]={
+        {FUNC, "召唤钥匙商-一号", ST.SummonNPC_4003001, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤钥匙商-二号", ST.SummonNPC_4003002, GOSSIP_ICON_TRAINER},
+        {FUNC, "召唤钥匙商-三号", ST.SummonNPC_4003003, GOSSIP_ICON_TRAINER},
     },
 
     [MMENU+0x10]={--其他功能
@@ -713,254 +908,8 @@ local Menu={
     },
 }
 
-function ST.SummonNPC(player, entry)
-    local guid = player:GetGUIDLow()
-    local lastTime, nowTime = (ST[guid] or 0), os.time()
-
-    if (player:IsInCombat()) then
-        player:SendAreaTriggerMessage("不能在战斗中召唤。")
-    else
-        if(nowTime > lastTime) then
-            local map = player:GetMap()
-            if(map) then
-                player:SendAreaTriggerMessage(map:GetName())
-                local x,y,z=player:GetX()+1,player:GetY(),player:GetZ()
-                local nz=map:GetHeight(x,y)
-                if(nz>z and nz<(z+5))then
-                    z=nz
-                end
-                local NPC = player:SpawnCreature(entry, x,y,z,0, 3, ST.TIME*1000)
-                if(NPC)then
-                    player:SendAreaTriggerMessage("召唤随身NPC成功。")
-                    NPC:SetFacingToObject(player)
-                    NPC:SendUnitSay(string.format("%s,你好，需要点什么？",player:GetName()),0)
-                    lastTime=os.time()+ST.TIME
-                else
-                    player:SendAreaTriggerMessage("召唤随身NPC失败。")
-                end
-            end
-        else
-            player:SendAreaTriggerMessage("召唤NPC不能太频繁。")
-        end
-    end
-    ST[guid]=lastTime
-end
-
-function ST.SummonNPC_4001001(player)
-	ST.SummonNPC(player, 4001001)
-end
-function ST.SummonNPC_4001002(player)
-	ST.SummonNPC(player, 4001002)
-end
-function ST.SummonNPC_4001003(player)
-	ST.SummonNPC(player, 4001003)
-end
-function ST.SummonNPC_4001004(player)
-	ST.SummonNPC(player, 4001004)
-end
-function ST.SummonNPC_4001005(player)
-	ST.SummonNPC(player, 4001005)
-end
-function ST.SummonNPC_4001006(player)
-	ST.SummonNPC(player, 4001006)
-end
-function ST.SummonNPC_4001007(player)
-	ST.SummonNPC(player, 4001007)
-end
-function ST.SummonNPC_4001008(player)
-	ST.SummonNPC(player, 4001008)
-end
-function ST.SummonNPC_4001009(player)
-	ST.SummonNPC(player, 4001009)
-end
-function ST.SummonNPC_4001010(player)
-	ST.SummonNPC(player, 4001010)
-end
-function ST.SummonNPC_4002001(player)
-	ST.SummonNPC(player, 4002001)
-end
-function ST.SummonNPC_4002002(player)
-	ST.SummonNPC(player, 4002002)
-end
-function ST.SummonNPC_4002003(player)
-	ST.SummonNPC(player, 4002003)
-end
-function ST.SummonNPC_4002004(player)
-	ST.SummonNPC(player, 4002004)
-end
-function ST.SummonNPC_4002005(player)
-	ST.SummonNPC(player, 4002005)
-end
-function ST.SummonNPC_4002006(player)
-	ST.SummonNPC(player, 4002006)
-end
-function ST.SummonNPC_4002007(player)
-	ST.SummonNPC(player, 4002007)
-end
-function ST.SummonNPC_4002008(player)
-	ST.SummonNPC(player, 4002008)
-end
-function ST.SummonNPC_4002009(player)
-	ST.SummonNPC(player, 4002009)
-end
-function ST.SummonNPC_4002010(player)
-	ST.SummonNPC(player, 4002010)
-end
-function ST.SummonNPC_4003001(player)
-	ST.SummonNPC(player, 4003001)
-end
-function ST.SummonNPC_4003002(player)
-	ST.SummonNPC(player, 4003002)
-end
-function ST.SummonNPC_4003003(player)
-	ST.SummonNPC(player, 4003003)
-end
-
-local function ResetPlayer(player, flag, text)
-    player:SetAtLoginFlag(flag)
-    player:SendAreaTriggerMessage("你需要重新登录角色，才能修改"..text.."。")
-    player:SendAreaTriggerMessage("正在返回选择角色菜单")
-    player:LogoutPlayer(true)
-end
 
 
-local Stone={
-    GetTimeASString=function(player)
-        local inGameTime=player:GetTotalPlayedTime()
-        local days=math.modf(inGameTime/(24*3600))
-        local hours=math.modf((inGameTime-(days*24*3600))/3600)
-        local mins=math.modf((inGameTime-(days*24*3600+hours*3600))/60)
-        return days.."天"..hours.."时"..mins.."分"
-    end,
-
-    GoHome=function(player)--回到家
-        player:CastSpell(player,8690,true)
-        player:ResetSpellCooldown(8690, true)
-        player:SendBroadcastMessage("已经回到家")
-    end,
-
-    SetHome=function(player)--设置当前位置为家
-        local x,y,z,mapId,areaId=player:GetX(),player:GetY(),player:GetZ(),player:GetMapId(),player:GetAreaId() 
-        player:SetBindPoint(x,y,z,mapId,areaId)
-        player:SendBroadcastMessage("已经设置当前位置为家")
-    end,
-
-    OpenBank=function(player)--打开银行
-        player:SendShowBank(player)
-        player:SendBroadcastMessage("已经打开银行")
-    end,
-
-    WeakOut=function(player)--移除复活虚弱
-        if(player:HasAura(15007))then
-            player:RemoveAura(15007)    --移除复活虚弱
-            player:SetHealth(player:GetMaxHealth())
-            --self:RemoveAllAuras()    --移除所有状态
-            player:SendBroadcastMessage("你的身上的复活虚弱状态已经被移除。")
-        else
-            player:SendBroadcastMessage("你的身上没有复活虚弱状态。")
-        end
-    end,
-
-    OutCombat=function(player)--脱离战斗
-        if(player:IsInCombat())then
-            player:ClearInCombat()
-            player:SendAreaTriggerMessage("你已经脱离战斗")
-            player:SendBroadcastMessage("你已经脱离战斗。")
-        else
-            player:SendAreaTriggerMessage("你并没有在战斗。")
-            player:SendBroadcastMessage("你并没有在战斗。")
-        end
-    end,
-
-    WSkillsToMax=function(player)--技能熟练度
-        player:AdvanceSkillsToMax()
-        player:SendBroadcastMessage("当前技能熟练度已经达到最大值")
-    end,
-
-    MaxHealth=function(player)    --回复生命
-        player:SetHealth(player:GetMaxHealth())
-        player:SendBroadcastMessage("生命值已经回满。")
-    end,
-
-    ResetTalents = function(player)--重置天赋
-        player:ResetTalents(true)--免费
-        player:SendBroadcastMessage("已经重置天赋")
-    end,
-
-    ResetPetTalents=function(player)--重置宠物天赋
-        player:ResetPetTalents()
-        player:SendBroadcastMessage("已经重置宠物天赋")
-    end,
-
-    ResetAllCD=function(player)--刷新冷却
-        player:ResetAllCooldowns()
-        player:SendBroadcastMessage("已经重置物品和技能冷却")
-    end,
-
-    RepairAll=function(player)--修理装备
-        player:DurabilityRepairAll(true,1,false)
-        player:SendBroadcastMessage("修理完所有装备。")
-    end,
-
-    SaveToDB=function(player)--保存数据
-        player:SaveToDB()
-        player:SendAreaTriggerMessage("保存数据完成")
-    end,
-
-    Logout=function(player)--返回选择角色
-        player:SendAreaTriggerMessage("正在返回选择角色菜单")
-        player:LogoutPlayer(true)
-    end,
-
-    LogoutNosave=function(player)--不保存数据,返回选择角色
-        player:SendAreaTriggerMessage("正在返回选择角色菜单")
-        player:LogoutPlayer(false)
-    end,
-
-    UnBind=function(player)    --副本解绑
-        local nowmap=player:GetMapId()
-        for k, v in pairs(Instances) do 
-            local mapid=v[1]
-            if(mapid~=nowmap)then
-                player:UnbindInstance(v[1],v[2])
-            else
-                player:SendBroadcastMessage("你所在的当前副本无法解除绑定。")
-            end
-        end
-        player:SendAreaTriggerMessage("已经解除所有副本的绑定")
-        player:SendBroadcastMessage("已经解除所有副本的绑定。")
-    end,
-    --[[登录标志
-    AT_LOGIN_RENAME            = 0x01,
-    AT_LOGIN_RESET_SPELLS      = 0x02,
-    AT_LOGIN_RESET_TALENTS     = 0x04,
-    AT_LOGIN_CUSTOMIZE         = 0x08,
-    AT_LOGIN_RESET_PET_TALENTS = 0x10,
-    AT_LOGIN_FIRST             = 0x20,
-    AT_LOGIN_CHANGE_FACTION    = 0x40,
-    AT_LOGIN_CHANGE_RACE       = 0x80
-    ]]--
-    ResetName=function(player, code)--修改名字
-        local target=player:GetSelection()
-        if(target and (target:GetTypeId()==player:GetTypeId()))then
-            ResetPlayer(target, 0x1, "名字")
-        else
-            player:SendAreaTriggerMessage("请选中一个玩家。")
-        end
-    end,
-    ResetFace=function(player)
-        ResetPlayer(player, 0x8, "外貌")
-    end,
-    ResetRace=function(player)
-        ResetPlayer(player, 0x80, "种族")
-    end,
-    ResetFaction=function(player)
-        ResetPlayer(player, 0x40, "阵营")
-    end,
-    ResetSpell=function(player)
-        ResetPlayer(player, 0x2, "所有法术")
-    end,
-}
 
 local function Enchanting(player, EncSpell, Eid, money) --附魔 (玩家,附魔效果,附魔位置)
     local ID=Eid
@@ -994,23 +943,28 @@ local function Enchanting(player, EncSpell, Eid, money) --附魔 (玩家,附魔�
     return false
 end
 
-
-function Stone.AddGossip(player, item, id)
+-- 根据 id 生成动态菜单
+function Stone.AddMenu(player, item, id)
     player:GossipClearMenu()--清除菜单
     local Rows=Menu[id] or {}
     local Pteam=player:GetTeam()
     local teamStr,team="",player:GetTeam()
+
     if(team==TEAM_ALLIANCE)then
         teamStr    ="[|cFF0070d0联盟|r]"
     elseif(team==TEAM_HORDE)then 
         teamStr    ="[|cFFF000A0部落|r]"
     end
-    for k, v in pairs(Rows) do 
-        local mtype,text,icon,intid=v[1],( v[2] or "???" ), (v[4] or GOSSIP_ICON_CHAT), (id*0x100+k)
+
+    for k, v in pairs(Rows) do
+        local mtype, text, icon, intid = v[1], ( v[2] or "???" ), (v[4] or GOSSIP_ICON_CHAT), (id*0x100+k)
+
         if(mtype==MENU)then
-            player:GossipMenuAddItem(icon, text, 0, (v[3] or id )*0x100)
+            sender = 1
+            player:GossipMenuAddItem(icon, text, sender, (v[3] or id )*0x100)
+
         elseif(mtype==FUNC or mtype==ENC)then
-            local code,msg,money=v[5],(v[6]or ""), (v[7] or 0)
+            local code, msg, money = v[5], (v[6]or ""), (v[7] or 0)
             if(mtype==ENC)then
                 icon=GOSSIP_ICON_TABARD
             end
@@ -1030,15 +984,17 @@ function Stone.AddGossip(player, item, id)
             player:GossipMenuAddItem(icon, text, 0, intid)
         end
     end
+
     if(id > 0)then--添加返回上一页菜单
         local length=string.len(string.format("%x",id))
         if(length>1)then
-            local temp=bit_and(id,2^((length-1)*4)-1)
+            local temp=bit_and(id, 2^((length-1)*4)-1)
             if(temp ~= MMENU)then
                 player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"上一页", 0,temp*0x100)
             end
         end
     end
+
     if(id ~= MMENU)then--添加返回主菜单
         player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"主菜单", 0, MMENU*0x100)
     else
@@ -1048,43 +1004,49 @@ function Stone.AddGossip(player, item, id)
         player:GossipMenuAddItem(GOSSIP_ICON_CHAT, "在线总时间：|cFF000080"..Stone.GetTimeASString(player).."|r", 0, MMENU*0x100)
     end
 
-
     player:GossipSendMenu(1, item)--发送菜单
 end
 
 
-function Stone.ShowGossip(event, player, item)
-    player:MoveTo(0,player:GetX(),player:GetY(),player:GetZ()+0.01)--移动就停止当前施法
-    Stone.AddGossip(player, item, MMENU)
+-- 显示菜单
+function Stone.ShowMenu(event, player, item)
+    -- 移动打断炉石施法
+    player:MoveTo(0, player:GetX(), player:GetY(), player:GetZ() + 0.01)
+    Stone.AddMenu(player, item, MMENU)
 end
 
-
-function Stone.SelectGossip(event, player, item, sender, intid, code, menu_id)
+-- 选择菜单
+function Stone.SelectMenu(event, player, item, sender, intid, code, menu_id)
     local menuid = math.modf(intid/0x100)    --菜单组
     local rowid = intid-menuid*0x100         --第几项
+    print("menuid = "..menuid.." rowid = "..rowid.." intid = "..intid)
+
     if(rowid == 0) then
-        Stone.AddGossip(player, item, menuid)
+        Stone.AddMenu(player, item, menuid)
+        print("sender = "..sender)
     else
-        player:GossipComplete()    --关闭菜单
-        local v=Menu[menuid] and Menu[menuid][rowid]
-        if(v)then                        --如果找到菜单项
-            local mtype=v[1] or MENU
-            if(mtype==MENU)then
-                Stone.AddGossip(player, item, (v[3] or MMENU))
-            elseif(mtype==FUNC)then                    --功能
-                local f=v[3]
-                if(f)then
-                    player:ModifyMoney(-sender)        --扣费
-                    f(player, code)
+        player:GossipComplete()    -- 关闭菜单
+        local v = Menu[menuid] and Menu[menuid][rowid]
+
+        if(v) then                        -- 如果找到菜单项
+            local menuType=v[1] or MENU
+
+            if(menuType == MENU) then -- 继续下级菜单
+                Stone.AddMenu(player, item, (v[3] or MMENU))
+            elseif(menuType==FUNC) then -- 调用函数
+                local funcName=v[3]
+                if(funcName)then
+                    player:ModifyMoney(-sender) --扣费
+                    funcName(player)
                 end
-            elseif(mtype==ENC)then --附魔
+            elseif(menuType==ENC) then -- 附魔
                 local spellId, equipId = v[3], v[4]
                 Enchanting(player, spellId, equipId, 0)
-                Stone.AddGossip(player, item, menuid)
-            elseif(mtype==TP)then                    --传送
+                Stone.AddMenu(player, item, menuid)
+            elseif(menuType==TP)then                    --传送
                 local map,mapid,x,y,z,o=v[2],v[3],v[4], v[5], v[6],v[7] or 0
                 local pname=player:GetName()--得到玩家名
-                if(player:Teleport(mapid,x,y,z,o,TELE_TO_GM_MODE))then--传送
+                if(player:Teleport(mapid,x,y,z,o, TELE_TO_GM_MODE))then--传送
                     Nplayer=GetPlayerByName(pname)--根据玩家名得到玩家
                     if(Nplayer)then
                         Nplayer:SendBroadcastMessage("已经到达 "..map)
@@ -1098,6 +1060,42 @@ function Stone.SelectGossip(event, player, item, sender, intid, code, menu_id)
     end
 end
 
+-- 召唤 NPC
+function ST.SummonNPC(player, entry)
+    local guid = player:GetGUIDLow()
+    local lastTime, nowTime = (ST[guid] or 0), os.time()
 
-RegisterItemGossipEvent(itemEntry, 1, Stone.ShowGossip)
-RegisterItemGossipEvent(itemEntry, 2, Stone.SelectGossip)
+    if (player:IsInCombat()) then
+        player:SendAreaTriggerMessage("不能在战斗中召唤。")
+    else
+        if(nowTime > lastTime) then
+            local map = player:GetMap()
+            if(map) then
+                player:SendAreaTriggerMessage(map:GetName())
+                local x,y,z=player:GetX()+1,player:GetY(),player:GetZ()
+                local nz=map:GetHeight(x,y)
+                if(nz>z and nz<(z+5))then
+                    z=nz
+                end
+                local NPC = player:SpawnCreature(entry, x,y,z,0, 3, ST.TIME*1000)
+                if(NPC)then
+                    player:SendAreaTriggerMessage("召唤随身NPC成功。")
+                    NPC:SetFacingToObject(player)
+                    NPC:SendUnitSay(string.format("%s,你好，需要点什么？",player:GetName()),0)
+                    lastTime=os.time()+ST.TIME
+                else
+                    player:SendAreaTriggerMessage("召唤随身NPC失败。")
+                end
+            end
+        else
+            player:SendAreaTriggerMessage("召唤NPC不能太频繁。")
+        end
+    end
+
+    --存储最后召唤时间
+    ST[guid] = lastTime
+end
+
+-- 注册回调
+RegisterItemGossipEvent(itemEntry, 1, Stone.ShowMenu)
+RegisterItemGossipEvent(itemEntry, 2, Stone.SelectMenu)
