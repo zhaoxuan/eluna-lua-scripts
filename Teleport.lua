@@ -946,14 +946,14 @@ end
 -- 根据 id 生成动态菜单
 function Stone.AddMenu(player, item, id)
     player:GossipClearMenu()--清除菜单
-    local Rows=Menu[id] or {}
-    local Pteam=player:GetTeam()
-    local teamStr,team="",player:GetTeam()
+    local Rows = Menu[id] or {}
+    local Pteam = player:GetTeam()
+    local teamStr, team = "", player:GetTeam()
 
-    if(team==TEAM_ALLIANCE)then
-        teamStr    ="[|cFF0070d0联盟|r]"
-    elseif(team==TEAM_HORDE)then 
-        teamStr    ="[|cFFF000A0部落|r]"
+    if(team == TEAM_ALLIANCE)then
+        teamStr = "[|cFF0070d0联盟|r]"
+    elseif(team == TEAM_HORDE)then
+        teamStr = "[|cFFF000A0部落|r]"
     end
 
     for k, v in pairs(Rows) do
@@ -1011,15 +1011,15 @@ end
 -- 显示菜单
 function Stone.ShowMenu(event, player, item)
     -- 移动打断炉石施法
-    player:MoveTo(0, player:GetX(), player:GetY(), player:GetZ() + 0.01)
+    -- player:MoveTo(0, player:GetX(), player:GetY(), player:GetZ() + 0.01)
     Stone.AddMenu(player, item, MMENU)
+    return false
 end
 
 -- 选择菜单
 function Stone.SelectMenu(event, player, item, sender, intid, code, menu_id)
     local menuid = math.modf(intid/0x100)    --菜单组
     local rowid = intid-menuid*0x100         --第几项
-    print("menuid = "..menuid.." rowid = "..rowid.." intid = "..intid)
 
     if(rowid == 0) then
         Stone.AddMenu(player, item, menuid)
