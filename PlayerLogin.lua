@@ -11,9 +11,11 @@ end
 -- 每次登陆
 local function OnPlayerLogin(event, player)
     local playerNmae = player:GetName()
-    SendWorldMessage("污妖王："..playerNmae.." 上线了")
+    SendWorldMessage("|cFFFF0000[系统公告]|r污妖王："..playerNmae.." 上线了")
 end
 
 
+-- 首次登陆
 RegisterPlayerEvent(30, OnPlayerFirstLogin)
+-- 每次登陆
 RegisterPlayerEvent(3, OnPlayerLogin)

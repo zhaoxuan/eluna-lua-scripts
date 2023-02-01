@@ -299,15 +299,13 @@ local Menu={
     [MMENU]={--主菜单
         {FUNC, "传送回家",         Stone.GoHome,       GOSSIP_ICON_CHAT, false, "是否传送回|cFFF0F000家|r ?"},
         {FUNC, "记录位置",         Stone.SetHome,      GOSSIP_ICON_INTERACT_1, false, "是否设置当前位置为|cFFF0F000家|r ?"},
-        {FUNC, "在线银行",         Stone.OpenBank,     GOSSIP_ICON_MONEY_BAG},
         {MENU, "地图传送",         TPMENU,             GOSSIP_ICON_BATTLE},
-        {MENU, "双重附魔",         ENCMENU,            GOSSIP_ICON_TABARD},
-        {FUNC, "解除副本绑定",      Stone.UnBind,       GOSSIP_ICON_INTERACT_1, false, "是否解除所有副本绑定 ?"},
-        {MENU, "其他功能",         MMENU+0x10,         GOSSIP_ICON_INTERACT_1},
+        {FUNC, "在线银行",         Stone.OpenBank,     GOSSIP_ICON_MONEY_BAG},
         {MENU, "职业技能训练师",    MMENU+0x20,         GOSSIP_ICON_BATTLE},
         {MENU, "专业技能训练师",    MMENU+0x30,         GOSSIP_ICON_BATTLE},
-        {MENU, "召唤 NPC 商人",    MMENU+0x40,       GOSSIP_ICON_VENDOR},
-        {FUNC, "强制脱离战斗",      Stone.OutCombat,    GOSSIP_ICON_CHAT},
+        {MENU, "召唤 NPC 商人",    MMENU+0x40,         GOSSIP_ICON_VENDOR},
+        {MENU, "双重附魔",         ENCMENU,            GOSSIP_ICON_TABARD},
+        {MENU, "其他功能",         MMENU+0x10,         GOSSIP_ICON_INTERACT_1},
     },
 
     [MMENU+0x40]={-- 材料商
@@ -345,6 +343,9 @@ local Menu={
     },
 
     [MMENU+0x10]={--其他功能
+        {FUNC, "重置所有冷却",            Stone.ResetAllCD,        GOSSIP_ICON_INTERACT_1,    false,"确认重置所有冷却 ?"},
+        {FUNC, "强制脱离战斗",      Stone.OutCombat,      GOSSIP_ICON_CHAT},
+        {FUNC, "解除副本绑定",      Stone.UnBind,         GOSSIP_ICON_INTERACT_1, false, "是否解除所有副本绑定 ?"},
         {FUNC, "解除虚弱",         Stone.WeakOut,         GOSSIP_ICON_INTERACT_1, false, "是否解除虚弱，并回复生命 ?"},
         {FUNC, "重置天赋"    ,     Stone.ResetTalents,    GOSSIP_ICON_TRAINER,    false, "确认重置天赋 ?"},
         {FUNC, "武器熟练度满值",    Stone.WSkillsToMax,    GOSSIP_ICON_TRAINER,    false, "确认把武器熟练度加满 ?"},
@@ -356,10 +357,9 @@ local Menu={
         -- {FUNC, "修改阵营",         Stone.ResetFaction,    GOSSIP_ICON_CHAT,        false,"是否更改阵营？\n|cFFFFFF00需要重新登录才能修改。|r"},
     },
     [GMMENU]={--GM菜单
-        {FUNC, "重置所有冷却",            Stone.ResetAllCD,        GOSSIP_ICON_INTERACT_1,    false,"确认重置所有冷却 ?"},
-        {FUNC, "保存角色",               Stone.SaveToDB,           GOSSIP_ICON_INTERACT_1},
-        {FUNC, "返回选择角色",            Stone.Logout,            GOSSIP_ICON_INTERACT_1,    false,"返回选择角色界面 ?"},
-        {FUNC, "|cFF800000不保存角色|r",  Stone.LogoutNosave,      GOSSIP_ICON_INTERACT_1,    false,"|cFFFF0000不保存角色，并返回选择角色界面 ?|r"},
+        -- {FUNC, "保存角色",               Stone.SaveToDB,           GOSSIP_ICON_INTERACT_1},
+        -- {FUNC, "返回选择角色",            Stone.Logout,            GOSSIP_ICON_INTERACT_1,    false,"返回选择角色界面 ?"},
+        -- {FUNC, "|cFF800000不保存角色|r",  Stone.LogoutNosave,      GOSSIP_ICON_INTERACT_1,    false,"|cFFFF0000不保存角色，并返回选择角色界面 ?|r"},
     },
     [TPMENU]={--传送菜单
         {MENU, "主要城市",            TPMENU+0x10, GOSSIP_ICON_BATTLE},
@@ -376,19 +376,19 @@ local Menu={
         {MENU, "野外BOSS传送",        TPMENU+0xc0, GOSSIP_ICON_BATTLE},
     },
     [TPMENU+0x10]={--主要城市
-        {TP, "暴风城", 0, -8842.09, 626.358, 94.0867, 3.61363,TEAM_ALLIANCE},
-        {TP, "达纳苏斯", 1, 9869.91, 2493.58, 1315.88, 2.78897,TEAM_ALLIANCE},
-        {TP, "铁炉堡", 0, -4900.47, -962.585, 501.455, 5.40538,TEAM_ALLIANCE},
-        {TP, "埃索达", 530, -3864.92, -11643.7, -137.644, 5.50862,TEAM_ALLIANCE},
-        {TP, "奥格瑞玛", 1, 1601.08, -4378.69, 9.9846, 2.14362,TEAM_HORDE},
-        {TP, "雷霆崖",  1, -1274.45, 71.8601, 128.159, 2.80623,TEAM_HORDE},
-        {TP, "幽暗城", 0, 1633.75, 240.167, -43.1034, 6.26128,TEAM_HORDE},
-        {TP, "银月城", 530, 9738.28, -7454.19, 13.5605, 0.043914,TEAM_HORDE},
+        {TP, "暴风城", 0, -8842.09, 626.358, 94.0867, 3.61363, TEAM_ALLIANCE},
+        {TP, "达纳苏斯", 1, 9869.91, 2493.58, 1315.88, 2.78897, TEAM_ALLIANCE},
+        {TP, "铁炉堡", 0, -4900.47, -962.585, 501.455, 5.40538, TEAM_ALLIANCE},
+        {TP, "埃索达", 530, -3864.92, -11643.7, -137.644, 5.50862, TEAM_ALLIANCE},
+        {TP, "奥格瑞玛", 1, 1601.08, -4378.69, 9.9846, 2.14362, TEAM_HORDE},
+        {TP, "雷霆崖",  1, -1274.45, 71.8601, 128.159, 2.80623, TEAM_HORDE},
+        {TP, "幽暗城", 0, 1633.75, 240.167, -43.1034, 6.26128, TEAM_HORDE},
+        {TP, "银月城", 530, 9738.28, -7454.19, 13.5605, 0.043914, TEAM_HORDE},
         {TP, "[诺森德]达拉然", 571, 5809.55, 503.975, 657.526, 2.38338},
-        {TP, "[外域]沙塔斯", 530, -1887.62, 5359.09, -12.4279, 4.40435}, 
+        {TP, "[外域]沙塔斯", 530, -1887.62, 5359.09, -12.4279, 4.40435},
         {TP, "[中立]藏宝海湾",0, -14281.9, 552.564, 8.90422, 0.860144},
-        {TP, "[中立]棘齿城",    1,    -955.21875,-3678.92,8.29946,    0},
-        {TP, "[中立]加基森",    1,    -7122.79834,-3704.82,14.0526,    0},
+        {TP, "[中立]棘齿城",    1,    -955.21875,-3678.92,8.29946, 0},
+        {TP, "[中立]加基森",    1,    -7122.79834,-3704.82,14.0526, 0},
     },
     [TPMENU+0x20]={--东部王国
         {TP, "艾尔文森林", 0,  -9449.06, 64.8392, 56.3581, 3.0704},
@@ -998,9 +998,9 @@ function Stone.AddMenu(player, item, id)
     if(id ~= MMENU)then--添加返回主菜单
         player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"主菜单", 0, MMENU*0x100)
     else
-        if(player:GetGMRank()>=3)then--是GM
-            player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"GM功能", 0, GMMENU*0x100)
-        end
+        -- if(player:GetGMRank()>=3)then--是GM
+        --     player:GossipMenuAddItem(GOSSIP_ICON_CHAT,"GM功能", 0, GMMENU*0x100)
+        -- end
         player:GossipMenuAddItem(GOSSIP_ICON_CHAT, "在线总时间：|cFF000080"..Stone.GetTimeASString(player).."|r", 0, MMENU*0x100)
     end
 
@@ -1023,7 +1023,7 @@ function Stone.SelectMenu(event, player, item, sender, intid, code, menu_id)
 
     if(rowid == 0) then
         Stone.AddMenu(player, item, menuid)
-        print("sender = "..sender)
+
     else
         player:GossipComplete()    -- 关闭菜单
         local v = Menu[menuid] and Menu[menuid][rowid]
@@ -1033,16 +1033,19 @@ function Stone.SelectMenu(event, player, item, sender, intid, code, menu_id)
 
             if(menuType == MENU) then -- 继续下级菜单
                 Stone.AddMenu(player, item, (v[3] or MMENU))
+
             elseif(menuType==FUNC) then -- 调用函数
                 local funcName=v[3]
                 if(funcName)then
                     player:ModifyMoney(-sender) --扣费
                     funcName(player)
                 end
+
             elseif(menuType==ENC) then -- 附魔
                 local spellId, equipId = v[3], v[4]
                 Enchanting(player, spellId, equipId, 0)
                 Stone.AddMenu(player, item, menuid)
+
             elseif(menuType==TP)then                    --传送
                 local map,mapid,x,y,z,o=v[2],v[3],v[4], v[5], v[6],v[7] or 0
                 local pname=player:GetName()--得到玩家名
